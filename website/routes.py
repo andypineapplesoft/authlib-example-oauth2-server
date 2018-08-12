@@ -16,24 +16,38 @@ def current_user():
         return User.query.get(uid)
     return None
 
-
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/')
 def home():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            user = User(username=username)
-            db.session.add(user)
-            db.session.commit()
-        session['id'] = user.id
-        return redirect('/')
     user = current_user()
     if user:
         clients = OAuth2Client.query.filter_by(user_id=user.id).all()
     else:
         clients = []
     return render_template('home.html', user=user, clients=clients)
+
+
+@bp.route('/login', methods=('GET', 'POST'))
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+
+        if password != "10102020":
+            return redirect('/fail_login')
+
+        if not user:
+            user = User(username=username)
+            db.session.add(user)
+            db.session.commit()
+        session['id'] = user.id
+        return redirect('/')
+    return redirect('/')
+
+
+@bp.route('/fail_login')
+def fail_login():
+    return render_template('fail_login.html')
 
 
 @bp.route('/logout')
@@ -79,6 +93,9 @@ def authorize():
         grant_user = None
     return authorization.create_authorization_response(grant_user=grant_user)
 
+@bp.route('/sunho')
+def sunho():
+    return render_template('sunho.html')
 
 @bp.route('/oauth/token', methods=['POST'])
 def issue_token():
@@ -95,3 +112,4 @@ def revoke_token():
 def api_me():
     user = current_token.user
     return jsonify(id=user.id, username=user.username)
+

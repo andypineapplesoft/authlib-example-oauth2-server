@@ -11,7 +11,10 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(40), unique=True)
+    username = db.Column(db.String(255), unique=True)
+    userpass = db.Column(db.String(255))
+    useremail = db.Column(db.String(255))
+    
 
     def __str__(self):
         return self.username
@@ -19,8 +22,11 @@ class User(db.Model):
     def get_user_id(self):
         return self.id
 
+    def make_password(mypass):
+        return mypass
+
     def check_password(self, password):
-        return password == 'valid'
+        return userpass == make_password(password)
 
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):

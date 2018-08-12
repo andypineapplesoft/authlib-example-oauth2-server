@@ -1,3 +1,5 @@
 Flask
 Flask-SQLAlchemy
+uwsgi
+pymysql
 Authlib>=0.6

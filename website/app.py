@@ -5,6 +5,7 @@ from .oauth2 import config_oauth
 from .routes import bp
 
 
+
 def create_app(config=None):
     app = Flask(__name__)
 
@@ -14,6 +15,7 @@ def create_app(config=None):
     # load environment configuration
     if 'WEBSITE_CONF' in os.environ:
         app.config.from_envvar('WEBSITE_CONF')
+
 
     # load app sepcified configuration
     if config is not None:
@@ -30,3 +32,4 @@ def setup_app(app):
     db.init_app(app)
     config_oauth(app)
     app.register_blueprint(bp, url_prefix='')
+
