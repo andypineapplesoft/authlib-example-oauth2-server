@@ -7,6 +7,11 @@ If you are looking for old Flask-OAuthlib implementation, check the
 - Documentation: <https://docs.authlib.org/en/latest/flask/oauth2.html>
 - Authlib Repo: <https://github.com/lepture/authlib>
 
+기존의 샘플 코드에서 다음의 기능을 추가
+- 인증 부분 추가
+- nginx(uWSGI 및 SSL 지원) 구동 가능
+- 기본적인 user 관리(password 기능 구현)
+
 ## Sponsors
 
 <table>
