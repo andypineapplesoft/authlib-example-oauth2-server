@@ -1,10 +1,13 @@
 from flask import Blueprint, request, session
 from flask import render_template, redirect, jsonify
+from flask import Response
+
 from werkzeug.security import gen_salt
 from authlib.flask.oauth2 import current_token
 from authlib.specs.rfc6749 import OAuth2Error
 from .models import db, User, OAuth2Client
 from .oauth2 import authorization, require_oauth
+from pprint import pprint
 
 
 bp = Blueprint(__name__, 'home')
@@ -31,13 +34,11 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        user = User.query.filter_by(username=username).first()
-
-        if password != "10102020":
-            return redirect('/fail_login')
+        email = request.form.get('email')
+        user = User.query.filter_by(username=username, userpass=password).first()
 
         if not user:
-            user = User(username=username)
+            user = User(username=username, userpass=password)
             db.session.add(user)
             db.session.commit()
         session['id'] = user.id
@@ -93,8 +94,15 @@ def authorize():
         grant_user = None
     return authorization.create_authorization_response(grant_user=grant_user)
 
-@bp.route('/sunho')
+@bp.route('/sunho', methods=['POST'])
 def sunho():
+    if request.method == 'POST':
+
+        r = Response(response=render_template('iot_clova.json'), status=200, mimetype="application/json")
+        r.headers["Content-Type"] = "application/json; charset=utf-8"
+        pprint(request.form) 
+        return r
+        # return render_template('iot_clova.json')
     return render_template('sunho.html')
 
 @bp.route('/oauth/token', methods=['POST'])
@@ -108,7 +116,7 @@ def revoke_token():
 
 
 @bp.route('/api/me')
-@require_oauth('profile')
+@require_oauth('device')
 def api_me():
     user = current_token.user
     return jsonify(id=user.id, username=user.username)
